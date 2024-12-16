@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+/*use App\Repository\VisiteRepository;
 
 /**
  * Description of VoyagesController
@@ -15,7 +16,11 @@ class VoyagesController extends AbstractController{
     
     #[Route('/voyages', name: 'voyages')]
     public function index(): Response{
-        return $this->render("pages/voyages.html.twig");
-    }
+    $visites = $this->repository->findAll();
+    return $this->render("pages/voyages.html.twig", [
+        'visites' => $visites
+    ]);
 }
 
+
+}

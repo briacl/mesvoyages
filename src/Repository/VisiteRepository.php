@@ -5,9 +5,15 @@ namespace App\Repository;
 use App\Entity\Visite;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+/*use Doctrine\ORM\Mapping;
+/*use Doctrine\ORM\EntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Visite>
+ * @method Visite|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Visite|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Visite[]    findAll()
+ * @method Visite[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class VisiteRepository extends ServiceEntityRepository
 {
@@ -40,4 +46,9 @@ class VisiteRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    
+    
+    
 }
+
+

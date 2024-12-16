@@ -1,0 +1,16 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Détails de la Visite{% endblock %}
+
+{% block body %}
+    <div class='container mt-4'>
+        <h1>Détails de la visite</h1>
+        <ul>
+            <li>Ville : {{ visite.ville }}</li>
+            <li>Pays : {{ visite.pays }}</li>
+            <li>Note : {{ visite.note }}</li>
+            <li>Date de création : {{ visite.DatecreationString }}</li>
+        </ul>
+        <a href='{{ path('voyages') }}' class='btn btn-primary'>Retour à la liste des voyages</a>
+    </div>
+{% endblock %}

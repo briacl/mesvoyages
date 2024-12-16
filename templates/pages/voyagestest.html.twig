@@ -15,30 +15,20 @@
                 <tr>
                     <td>
                         <h5 class='text-primary'>
-                            <a href='#'>{{ visite.ville }}</a>
+                            <a href='{{ path('visite_show', {'id': visite.id}) }}'>{{ visite.ville }}</a>
                         </h5>
                     </td>
                     <td>
                         {{ visite.pays }}
                     </td>
                     <td class='text-end'>
-                        <strong>
-                            {%if visite.note<10%}
-                                <div class='text-danger'>
-                                    {{ visite.note }}/20
-                                </div>
-                            {% else %}
-                                <div class='text-success'>
-                                    {{ visite.note }}/20
-                                </div>
-                            {% endif %}
-                        </strong>
+                        <strong>{{ visite.note }}/20</strong>
                     </td>
                     <td class='text-center'>
-                        {{ visite.datecreationstring }}
+                        {{ visite.DatecreationString }}
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-{% endblock %}
+{% endblock %}{# empty Twig template #}
