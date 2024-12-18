@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\VisiteRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use DateTime;
+use DateTimeInterface;
 
 #[ORM\Entity(repositoryClass: VisiteRepository::class)]
 class Visite
@@ -34,6 +36,10 @@ class Visite
 
     #[ORM\Column(nullable: true)]
     private ?int $tempmax = null;
+    
+    public function __construct() {
+        $this->datecreation = new DateTime('now');
+    }
 
     public function getId(): ?int
     {
@@ -78,7 +84,7 @@ class Visite
         }
     }
 
-    public function setDatecreation(?\DateTimeInterface $datecreation): static
+    public function setDatecreation(?\DateTimeInterface $datecreation): self
     {
         $this->datecreation = $datecreation;
 
