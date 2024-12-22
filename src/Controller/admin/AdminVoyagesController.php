@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 //use App\Repository\Environnement;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\VisiteRepository;
-//use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityManagerInterface;
 //use Symfony\Component\HttpFoundation\Request;
 use App\Form\VisiteType;
 use App\Entity\Visite;
@@ -21,10 +21,12 @@ use App\Entity\Visite;
  */
 class AdminVoyagesController extends AbstractController {
     
-    private $repository;
+    private VisiteRepository $repository;
+    private EntityManagerInterface $entityManager;
     
-    public function __construct(VisiteRepository $repository) {
+    public function __construct(VisiteRepository $repository, EntityManagerInterface $entityManager) {
         $this->repository = $repository;
+        $this->entityManager = $entityManager;
     }
     
     #[Route('/admin', name: 'admin.voyages', methods: ['GET', 'POST'])]
