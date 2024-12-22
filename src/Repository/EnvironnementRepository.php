@@ -40,4 +40,26 @@ class EnvironnementRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    
+    /**
+     * Supprime un environnement
+     * @param Environnement $environnement
+     * @return void
+     */
+    
+    public function remove(Environnement $environnement) : void {
+        $this->getEntityManager()->remove($environnement);
+        $this->getEntityManager()->flush();
+    }
+    
+    /**
+     * Ajoute ou modifie un environnement
+     * @param Environnement $environnement
+     * @return void
+     */
+    
+    public function add(Environnement $environnement) : void {
+        $this->getEntityManager()->persist($environnement);
+        $this->getEntityManager()->flush();
+    }
 }

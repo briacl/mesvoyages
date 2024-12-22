@@ -21,10 +21,14 @@ class VoyagesController extends AbstractController{
         $this->repository = $repository;
     }
     
-    #[Route('/voyages', name: 'voyages', methods: ['GET', 'POST'])]
-    public function index(Request $request): Response
-    {
-            $champ = $request->query->get('champ', null);
+    #[Route('/voyages', name: 'voyages', methods: ['GET'])]
+    public function index(Request $request): Response {
+        
+        //dd('Controller called');
+        
+        //return new Response('Page Voyages accessible');
+        
+            $champ = $request->query->get('champ', 'ville');
             $ordre = $request->query->get("ordre", 'ASC');
             //$valeur = $request->query->get('recherche', null);
 
@@ -34,6 +38,7 @@ class VoyagesController extends AbstractController{
             
             $allowFields = ['ville', 'pays', 'note', 'datecreation'];
             if (!in_array($champ, $allowFields)) {
+                
                 throw new \InvalidArgumentException("Invali sorting field: $champ");
             }
             
@@ -46,6 +51,7 @@ class VoyagesController extends AbstractController{
             return $this->render('pages/voyages.html.twig', [
                     'visites' => $visites,
             ]);
+        
     }
 
     #[Route('/voyages/recherche/{champ}', name: 'voyages.findallequal', methods: ['GET'])]

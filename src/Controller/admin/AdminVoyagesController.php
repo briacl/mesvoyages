@@ -5,12 +5,14 @@ namespace App\Controller\admin;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+//use App\Repository\EnvironnementRepository;
+//use App\Repository\Environnement;
+use Symfony\Component\HttpFoundation\Request;
 use App\Repository\VisiteRepository;
+//use Doctrine\ORM\EntityManagerInterface;
+//use Symfony\Component\HttpFoundation\Request;
 use App\Form\VisiteType;
 use App\Entity\Visite;
-use Symfony\Component\HttpFoundation\Request;
-use Doctrine\ORM\EntityManagerInterface;
-//use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of AdminVoyagesController
@@ -19,28 +21,52 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class AdminVoyagesController extends AbstractController {
     
-    private VisiteRepository $repository;
-    private EntityManagerInterface $entityManager;
+    private $repository;
     
-    public function __construct(VisiteRepository $repository, EntityManagerInterface $entityManager) {
-        $this->entityManager = $entityManager;
+    public function __construct(VisiteRepository $repository) {
         $this->repository = $repository;
     }
     
-    #[Route('/admin', name: 'admin.voyages')]
-    public function index() : Response {
-        $visites = $this->repository->findAllOrderBy('datecreation', 'DESC');
+    #[Route('/admin', name: 'admin.voyages', methods: ['GET', 'POST'])]
+    public function index(Request $request) : Response {
+        
+        //dd('Controller called');
+        
+        //return new Response('Page Voyages accessible');
+        
+        $champ = $request->query->get('champ', 'ville');
+        $ordre = $request->query->get("ordre", 'ASC');
+        //$valeur = $request->query->get('recherche', null);
+
+        if (!in_array($ordre, ['ASC', 'DESC'])) {
+            $ordre = 'ASC';
+        }
+            
+        $allowFields = ['ville', 'pays', 'note', 'datecreation'];
+        if (!in_array($champ, $allowFields)) {
+                
+            throw new \InvalidArgumentException("Invali sorting field: $champ");
+        }
+        
+        if ($champ) {
+            $visites = $this->repository->findAllOrderBy($champ, $ordre);
+        } else {
+            $visites = $this->repository->findAll();
+        }
+        
         return $this->render("admin/admin.voyages.html.twig", [
             'visites' => $visites
         ]);
     }
     
-    #[Route('/admin/suppr/{id}', name: 'admin.voyage.suppr')]
+    #[Route('/admin/voyages/suppr/{id}', name: 'admin.voyage.suppr')]
     public function suppr(int $id) : Response {
         $visite = $this->repository->find($id);
         $this->repository->remove($visite);
         return $this->redirectToRoute('admin.voyages');
     }
+    
+    
     
     #[Route('/admin/edit/{id}', name: 'admin.voyage.edit')]
     public function edit(int $id, Request $request) : Response {
