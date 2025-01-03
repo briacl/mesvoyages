@@ -10,9 +10,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\VisiteRepository;
 use Doctrine\ORM\EntityManagerInterface;
-//use Symfony\Component\HttpFoundation\Request;
 use App\Form\VisiteType;
 use App\Entity\Visite;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 /**
  * Description of AdminVoyagesController
@@ -23,10 +23,12 @@ class AdminVoyagesController extends AbstractController {
     
     private VisiteRepository $repository;
     private EntityManagerInterface $entityManager;
+    private $params;
     
-    public function __construct(VisiteRepository $repository, EntityManagerInterface $entityManager) {
+    public function __construct(VisiteRepository $repository, EntityManagerInterface $entityManager, ParameterBagInterface $params) {
         $this->repository = $repository;
         $this->entityManager = $entityManager;
+        $this->params = $params;
     }
     
     #[Route('/admin', name: 'admin.voyages', methods: ['GET', 'POST'])]
@@ -77,7 +79,28 @@ class AdminVoyagesController extends AbstractController {
         
         $formVisite->handleRequest($request);
         if ($formVisite->isSubmitted() && $formVisite->isValid()) {
+            /* @var UploadedFile $file */
+            $file = $formVisite->get('imageFile')->getData();
+            
+            if ($file) {
+                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $newFilename = $originalFilename.'-'.uniqid().'.'.$file->guessExtension();
+                
+                /*try {
+                    $file->move(
+                            $this->params->get('kernel.project_dir').'/pubolic/images/visites',
+                            $newFilename
+                    );
+                } catch (FileExpetion $e) {}
+                $visite->setImageName($newFilename);*/
+            }
+            $visite->setImageName($newFilename);
+            
             $this->repository->add($visite);
+            
+            $this->entityManager->persist($visite);
+            $this->entityManager->flush();
+            
             return $this->redirectToRoute('admin.voyages');
         }
         
@@ -86,6 +109,8 @@ class AdminVoyagesController extends AbstractController {
             'formvisite' => $formVisite->createView()
         ]);
     }
+    
+    
     
     #[Route('/admin/ajout', name: 'admin.voyage.ajout', methods: ['GET', 'POST'])]
     public function ajout(Request $request) : Response {
@@ -117,4 +142,10 @@ class AdminVoyagesController extends AbstractController {
             'formvisite' => $formVisite->createView()
         ]);
     }
+    
+    
+    
+
+    
+
 }

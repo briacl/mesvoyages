@@ -8,9 +8,14 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use DateTime;
-use DateTimeInterface;
+//use DateTimeInterface;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: VisiteRepository::class)]
+#[Vich\Uploadable]
 class Visite
 {
     #[ORM\Id]
@@ -26,6 +31,18 @@ class Visite
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $datecreation = null;
+    
+    #[Vich\UploadableField(mapping: 'visites', fileNameProperty: 'imageName', size: 'imageSize')]
+    private ?File $imageFile = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $imageName = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $imageSize = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $note = null;
@@ -171,4 +188,52 @@ class Visite
 
         return $this;
     }
+    public function getImageFile(): ?File {
+        return $this->imageFile;
+    }
+
+    public function getImageName(): ?string {
+        return $this->imageName;
+    }
+
+    public function getImageSize(): ?int {
+        return $this->imageSize;
+    }
+
+    public function setImageFile(?File $imageFile=null): self {
+        $this->imageFile = $imageFile;
+        if($imageFile) {
+            $this->updateAt = new \DateTimeImmutable();
+        }
+        return $this;
+    }
+
+    public function setImageName(?string $imageName): self {
+        $this->imageName = $imageName;
+        return $this;
+    }
+
+    public function setImageSize(?int $imageSize): void {
+        $this->imageSize = $imageSize;
+    }
+    
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterace $context) {
+        $file = $this->getImageFile();
+        if ($file != null && $file != "") {
+            $poids = @filesize($file);
+            if ($poids != false && $poids > 512000) {
+                $context->buildViolation("Cette image est trop lourde (500Ko max)")
+                        ->atPath('imageFile')
+                        ->addViolation();
+            }
+            $infosImage = @getimagesize($file);
+            if ($infosImage == false) {
+                $context->buildViolation("Ce fichier n'est pas une image")
+                        ->atPath('imageFile')
+                        ->addViolation();
+            }
+        }
+    }
+
 }

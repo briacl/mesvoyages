@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use App\Entity\Environnement;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 class VisiteType extends AbstractType
 {
@@ -37,6 +38,10 @@ class VisiteType extends AbstractType
                 'choice_label' => 'nom',
                 'multiple' => true,
                 'required' => false
+            ])
+            ->add('imageFile', FileType::class, [
+                'required' => false,
+                'label' => 'Image (JPEG, PNG file)',
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Enregistrer'
