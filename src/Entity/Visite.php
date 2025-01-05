@@ -218,7 +218,7 @@ class Visite
     }
     
     #[Assert\Callback]
-    public function validate(ExecutionContextInterace $context) {
+    public function validate(ExecutionContextInterface $context) {
         $file = $this->getImageFile();
         if ($file != null && $file != "") {
             $poids = @filesize($file);
