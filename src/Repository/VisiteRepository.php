@@ -102,6 +102,14 @@ class VisiteRepository extends ServiceEntityRepository
         }
     }
     
+    public function findLastTwhoVisits() {
+        return $this->createQueryBuilder('v')
+                ->orderBy('v.datecreation', 'DESC')
+                ->setMaxResults(2)
+                ->getQuery()
+                ->getResult();
+    }
+    
     /**
      * Supprime une visite
      * @param Visite $visite
