@@ -54,17 +54,31 @@ class VoyagesController extends AbstractController{
         
     }
 
-    #[Route('/voyages/recherche/{champ}', name: 'voyages.findallequal', methods: ['GET'])]
+    #[Route('/voyages/recherche/{champ}', name: 'voyages.findallequal', methods: ['GET', 'POST'])]
     public function findAllEqual($champ, Request $request) : Response {
-        if($this->isCsrfTokenValid('filtre_'.$champ, $request->get('_token'))) {
-            $valeur = $request->query->get('recherche');
-            $visites = $this->reposoitory->findByEqualValue($champ,$valeur);
+        // Vérification du token CSRF
+        if ($this->isCsrfTokenValid('filtre_'.$champ, $request->get('_token'))) {
 
+            // Récupérer la valeur de la recherche
+            $valeur = $request->query->get('recherche');
+
+            // Si un filtre est appliqué (valeur non vide)
+            if ($valeur) {
+                // Filtrer les visites en fonction de la valeur
+                $visites = $this->repository->findByEqualValue($champ, $valeur);
+            } else {
+                // Si aucun filtre n'est appliqué, récupérer toutes les visites
+                $visites = $this->repository->findAll();
+            }
+
+            // Rendu de la vue avec les visites filtrées ou toutes les visites
             return $this->render('pages/voyages.html.twig', [
-                    'visites' => $visites,
+                'visites' => $visites,
             ]);
         }
-        return $this->redirectToRoute("voyages");
+
+        // Redirection si le token CSRF est invalide
+        return $this->redirectToRoute('voyages');
     }
     
     #[Route('/voyages/voyage/{id}', name: 'voyages.showone', methods: ['GET'])]
